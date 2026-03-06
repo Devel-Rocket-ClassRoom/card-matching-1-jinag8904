@@ -5,16 +5,19 @@ using System.Threading;
 class Card
 {
     Random rand = new Random();
+    CardSkinNumber cardSkinNumber = new CardSkinNumber();
+    CardSkinAlpha cardSkinAlpha = new CardSkinAlpha();
+    CardSkinSign cardSkinSign = new CardSkinSign();
+
     Level level;
+    Mode mode;
     Skin skin;
     public Result gameResult = Result.Undecided;
 
-    public static string[] allCards = { "1", "1", "2", "2", "3", "3", "4", "4", "5", "5", "6", "6", "7", "7", "8", "8", "9", "9", "10", "10", "11", "11", "12", "12" };
-    public static string[] allCardsAlpha = { "A", "A", "B", "B", "C", "C", "D", "D", "E", "E", "F", "F", "G", "G", "H", "H", "I", "I", "J", "J", "K", "K", "L", "L" };
-    public static string[] allCardsSign = { "★", "★", "♠", "♠", "♥", "♥", "◆", "◆", "♣", "♣", "●", "●", "■", "■", "▲", "▲", "▼", "▼", "◎", "◎", "◈", "◈", "▣", "▣" };
+    public static int[] allCards = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12 };
 
-    string[,] mixedCards;
-    string[,] revealedCards;
+    int[,] mixedCards;
+    int[,] revealedCards;
 
     bool[] randomedCards;
     int selected;
@@ -86,22 +89,24 @@ class Card
         switch (level)  // 난이도 별 필드 초기화
         {
             case Level.Easy:
-                revealedCards = new string[2, 4];
-                mixedCards = new string[2, 4];
+                revealedCards = new int[2, 4];
+                mixedCards = new int[2, 4];
                 randomedCards = new bool[8];
                 tryLimit = 10;
                 sleepMSeconds = 5000;
                 break;
+
             case Level.Normal:
-                revealedCards = new string[4, 4];
-                mixedCards = new string[4, 4];
+                revealedCards = new int[4, 4];
+                mixedCards = new int[4, 4];
                 randomedCards = new bool[16];
                 tryLimit = 20;
                 sleepMSeconds = 3000;
                 break;
+
             case Level.Hard:
-                revealedCards = new string[4, 6];
-                mixedCards = new string[4, 6];
+                revealedCards = new int[4, 6];
+                mixedCards = new int[4, 6];
                 randomedCards = new bool[24];
                 tryLimit = 30;
                 sleepMSeconds = 2000;
@@ -119,25 +124,14 @@ class Card
         {
             for (int j = 0; j < revealedCards.GetLength(1); j++)
             {
-                revealedCards[i, j] = "**";
+                revealedCards[i, j] = 0;
 
                 while (true)
                 {
                     selected = rand.Next(randomedCards.Length);
                     if (randomedCards[selected] == true) continue;
 
-                    switch (skin)
-                    {
-                        case Skin.Number:
-                            mixedCards[i, j] = allCards[selected];
-                            break;
-                        case Skin.Alphabet:
-                            mixedCards[i, j] = allCardsAlpha[selected];
-                            break;
-                        case Skin.Sign:
-                            mixedCards[i, j] = allCardsSign[selected];
-                            break;
-                    }
+                    mixedCards[i, j] = allCards[selected];
 
                     randomedCards[selected] = true;
                     break;
@@ -152,7 +146,7 @@ class Card
         {
             for (int j = 0; j < mixedCards.GetLength(1); j++)
             {
-                revealedCards[i, j] = mixedCards[i, j].ToString();
+                revealedCards[i, j] = mixedCards[i, j];
             }
         }
 
@@ -164,9 +158,11 @@ class Card
         {
             for (int j = 0; j < mixedCards.GetLength(1); j++)
             {
-                revealedCards[i, j] = "**";
+                revealedCards[i, j] = 0;
             }
         }
+
+        Console.Clear();
     }
 
     public void ShowCards()
@@ -182,11 +178,28 @@ class Card
 
         for (int i = 0; i < revealedCards.GetLength(0); i++)
         {
-            Console.Write($"{i+1}행 ");
+            Console.Write($"{i + 1}행 ");
 
             for (int j = 0; j < revealedCards.GetLength(1); j++)
             {
-                GetColor(revealedCards[i, j]);
+                switch (skin)
+                {
+                    case Skin.Number:
+                        Console.ForegroundColor = cardSkinNumber.GetColor(revealedCards[i, j]);
+                        Console.Write($" {cardSkinNumber.GetDisplay(revealedCards[i, j])}  ");
+                        Console.ResetColor();
+                        break;
+                    case Skin.Alphabet:
+                        Console.ForegroundColor = cardSkinAlpha.GetColor(revealedCards[i, j]);
+                        Console.Write($" {cardSkinAlpha.GetDisplay(revealedCards[i, j])}  ");
+                        Console.ResetColor();
+                        break;
+                    case Skin.Sign:
+                        Console.ForegroundColor = cardSkinSign.GetColor(revealedCards[i, j]);
+                        Console.Write($" {cardSkinSign.GetDisplay(revealedCards[i, j])}  ");
+                        Console.ResetColor();
+                        break;
+                }
             }
 
             Console.WriteLine();
@@ -211,14 +224,14 @@ class Card
                 yeol1 = result2 - 1;
 
                 if (haeng1 >= 0 && haeng1 < mixedCards.GetLength(0) && yeol1 >= 0 && yeol1 < mixedCards.GetLength(1))
-                    if (revealedCards[haeng1, yeol1] == "**")
+                    if (revealedCards[haeng1, yeol1] == 0)
                         break;
             }
 
             Console.WriteLine("잘못된 입력입니다.");
         }
 
-        revealedCards[haeng1, yeol1] = $"[{mixedCards[haeng1, yeol1]}]";
+        revealedCards[haeng1, yeol1] = mixedCards[haeng1, yeol1];
         ShowCards();
 
         while (true)
@@ -232,22 +245,22 @@ class Card
                 yeol2 = result2 - 1;
 
                 if (haeng2 >= 0 && haeng2 < mixedCards.GetLength(0) && yeol2 >= 0 && yeol2 < mixedCards.GetLength(1))
-                    if (revealedCards[haeng2, yeol2] == "**")
+                    if (revealedCards[haeng2, yeol2] == 0)
                         break;
             }
 
             Console.WriteLine("잘못된 입력입니다.");
         }
 
-        revealedCards[haeng2, yeol2] = $"[{mixedCards[haeng2, yeol2]}]";
+        revealedCards[haeng2, yeol2] = mixedCards[haeng2, yeol2];
         ShowCards();
 
         if (mixedCards[haeng1, yeol1] != mixedCards[haeng2, yeol2])
         {
             Console.WriteLine("\n짝이 맞지 않습니다!");
 
-            revealedCards[haeng1, yeol1] = "**";
-            revealedCards[haeng2, yeol2] = "**";
+            revealedCards[haeng1, yeol1] = 0;
+            revealedCards[haeng2, yeol2] = 0;
         }
 
         else
@@ -308,85 +321,4 @@ class Card
             }
         }
     }
-
-    void GetColor(string cardValue)
-    {
-        switch (cardValue)
-        {
-            case "★":
-            case "A":
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                break;
-            case "♠":
-            case "B":
-                Console.ForegroundColor = ConsoleColor.Blue;
-                break;
-            case "♥":
-            case "C":
-                Console.ForegroundColor = ConsoleColor.Red;
-                break;
-            case "◆":
-            case "D":
-                Console.ForegroundColor = ConsoleColor.Green;
-                break;
-            case "♣":
-            case "E":
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                break;
-            case "●":
-            case "F":
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                break;
-            case "■":
-            case "G":
-                Console.ForegroundColor = ConsoleColor.White;
-                break;
-            case "▲":
-            case "H":
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                break;
-            case "▼":
-            case "I":
-                Console.ForegroundColor = ConsoleColor.DarkBlue;
-                break;
-            case "◎":
-            case "J":
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                break;
-            case "◈":
-            case "K":
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                break;
-            case "▣":
-            case "L":
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
-                break;
-            default:
-                Console.ForegroundColor = ConsoleColor.White;
-                break;
-        }
-        Console.Write($" {cardValue}  ");
-        Console.ResetColor();
-    }
-}
-
-enum Level
-{
-    Easy,
-    Normal,
-    Hard
-}
-
-enum Result
-{
-    Undecided,
-    Win,
-    Lose    
-}
-
-enum Skin
-{
-    Number,
-    Alphabet,
-    Sign
 }
