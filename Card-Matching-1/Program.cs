@@ -1,28 +1,28 @@
 using System;
 
 Console.WriteLine("=== 카드 짝 맞추기 게임 ===");
-Card card = new Card();
+CardGame cardgame = new CardGame();
 bool again = true;
 
 while (again)
 {
-    card.Setting();
-    card.CardMix();
-
-    card.MiriBogi();
+    cardgame.Setting();
+    cardgame.Reset();
+    cardgame.CardMix();
+    cardgame.MiriBogi();
 
     while (true)
     {
-        card.ShowCards();
-        card.ShowCount();
+        cardgame.ShowCards();
+        cardgame.ShowCount();
 
-        card.SelectCards();
+        cardgame.SelectCards();
 
-        card.IsGameEnd();
+        cardgame.IsGameEnd();
 
-        if (card.gameResult != Result.Undecided)
+        if (cardgame.gameResult != Result.Undecided)
         {
-            again = card.GameEnd();
+            again = cardgame.GameEnd();
             break;
         }
     }
