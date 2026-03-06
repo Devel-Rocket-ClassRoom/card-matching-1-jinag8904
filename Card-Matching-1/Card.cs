@@ -1,14 +1,19 @@
 ﻿
 using System;
+using System.Threading;
 
 class Card
 {
     Random rand = new Random();
     Level level;
+    Skin skin;
     public Result gameResult = Result.Undecided;
 
-    static int[] allCards = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12 };
-    int[,] mixedCards;
+    public static string[] allCards = { "1", "1", "2", "2", "3", "3", "4", "4", "5", "5", "6", "6", "7", "7", "8", "8", "9", "9", "10", "10", "11", "11", "12", "12" };
+    public static string[] allCardsAlpha = { "A", "A", "B", "B", "C", "C", "D", "D", "E", "E", "F", "F", "G", "G", "H", "H", "I", "I", "J", "J", "K", "K", "L", "L" };
+    public static string[] allCardsSign = { "★", "★", "♠", "♠", "♥", "♥", "◆", "◆", "♣", "♣", "●", "●", "■", "■", "▲", "▲", "▼", "▼", "◎", "◎", "◈", "◈", "▣", "▣" };
+
+    string[,] mixedCards;
     string[,] revealedCards;
 
     bool[] randomedCards;
@@ -23,8 +28,35 @@ class Card
     int haeng1, yeol1;
     int haeng2, yeol2;
 
-    public void LevelSetting()
+    int sleepMSeconds;
+
+    public void Setting()
     {
+        while (true)
+        {
+            Console.WriteLine("\n스킨을 선택하세요:\n1. 숫자 (기본)\n2. 알파벳 (컬러)\n3. 기호 (컬러)");
+            Console.Write("선택: ");
+            input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    skin = Skin.Number;
+                    break;
+                case "2":
+                    skin = Skin.Alphabet;
+                    break;
+                case "3":
+                    skin = Skin.Sign;
+                    break;
+                default:
+                    Console.WriteLine("잘못된 입력입니다.");
+                    continue;
+            }
+
+            break;
+        }
+
         while (true)
         {
             Console.WriteLine("\n난이도를 선택하세요:\n1. 쉬움 (2x4)\n2. 보통 (4x4)\n3. 어려움 (4x6)");
@@ -55,21 +87,24 @@ class Card
         {
             case Level.Easy:
                 revealedCards = new string[2, 4];
-                mixedCards = new int[2, 4];
+                mixedCards = new string[2, 4];
                 randomedCards = new bool[8];
                 tryLimit = 10;
+                sleepMSeconds = 5000;
                 break;
             case Level.Normal:
                 revealedCards = new string[4, 4];
-                mixedCards = new int[4, 4];
+                mixedCards = new string[4, 4];
                 randomedCards = new bool[16];
                 tryLimit = 20;
+                sleepMSeconds = 3000;
                 break;
             case Level.Hard:
                 revealedCards = new string[4, 6];
-                mixedCards = new int[4, 6];
+                mixedCards = new string[4, 6];
                 randomedCards = new bool[24];
                 tryLimit = 30;
+                sleepMSeconds = 2000;
                 break;
         }
 
@@ -91,17 +126,47 @@ class Card
                     selected = rand.Next(randomedCards.Length);
                     if (randomedCards[selected] == true) continue;
 
-                    mixedCards[i, j] = allCards[selected];
+                    switch (skin)
+                    {
+                        case Skin.Number:
+                            mixedCards[i, j] = allCards[selected];
+                            break;
+                        case Skin.Alphabet:
+                            mixedCards[i, j] = allCardsAlpha[selected];
+                            break;
+                        case Skin.Sign:
+                            mixedCards[i, j] = allCardsSign[selected];
+                            break;
+                    }
+
                     randomedCards[selected] = true;
                     break;
-                }                
+                }
             }
         }
     }
 
     public void MiriBogi()
     {
+        for (int i = 0; i < mixedCards.GetLength(0); i++)
+        {
+            for (int j = 0; j < mixedCards.GetLength(1); j++)
+            {
+                revealedCards[i, j] = mixedCards[i, j].ToString();
+            }
+        }
 
+        ShowCards();
+        Console.WriteLine($"\n잘 기억하세요! {sleepMSeconds/1000}초 후 뒤집힙니다.");
+        Thread.Sleep(sleepMSeconds);
+
+        for (int i = 0; i < mixedCards.GetLength(0); i++)
+        {
+            for (int j = 0; j < mixedCards.GetLength(1); j++)
+            {
+                revealedCards[i, j] = "**";
+            }
+        }
     }
 
     public void ShowCards()
@@ -121,7 +186,7 @@ class Card
 
             for (int j = 0; j < revealedCards.GetLength(1); j++)
             {
-                Console.Write($"{revealedCards[i, j]}  ");
+                GetColor(revealedCards[i, j]);
             }
 
             Console.WriteLine();
@@ -153,7 +218,7 @@ class Card
             Console.WriteLine("잘못된 입력입니다.");
         }
 
-        revealedCards[haeng1, yeol1] = $"[{mixedCards[haeng1, yeol1].ToString()}]";
+        revealedCards[haeng1, yeol1] = $"[{mixedCards[haeng1, yeol1]}]";
         ShowCards();
 
         while (true)
@@ -174,7 +239,7 @@ class Card
             Console.WriteLine("잘못된 입력입니다.");
         }
 
-        revealedCards[haeng2, yeol2] = $"[{mixedCards[haeng2, yeol2].ToString()}]";
+        revealedCards[haeng2, yeol2] = $"[{mixedCards[haeng2, yeol2]}]";
         ShowCards();
 
         if (mixedCards[haeng1, yeol1] != mixedCards[haeng2, yeol2])
@@ -189,8 +254,8 @@ class Card
         {
             Console.WriteLine("\n짝을 찾았습니다!");
 
-            revealedCards[haeng1, yeol1] = mixedCards[haeng1, yeol1].ToString();
-            revealedCards[haeng2, yeol2] = mixedCards[haeng2, yeol2].ToString();
+            revealedCards[haeng1, yeol1] = mixedCards[haeng1, yeol1];
+            revealedCards[haeng2, yeol2] = mixedCards[haeng2, yeol2];
 
             foundCount++;
         }
@@ -243,6 +308,66 @@ class Card
             }
         }
     }
+
+    void GetColor(string cardValue)
+    {
+        switch (cardValue)
+        {
+            case "★":
+            case "A":
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                break;
+            case "♠":
+            case "B":
+                Console.ForegroundColor = ConsoleColor.Blue;
+                break;
+            case "♥":
+            case "C":
+                Console.ForegroundColor = ConsoleColor.Red;
+                break;
+            case "◆":
+            case "D":
+                Console.ForegroundColor = ConsoleColor.Green;
+                break;
+            case "♣":
+            case "E":
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                break;
+            case "●":
+            case "F":
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                break;
+            case "■":
+            case "G":
+                Console.ForegroundColor = ConsoleColor.White;
+                break;
+            case "▲":
+            case "H":
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                break;
+            case "▼":
+            case "I":
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                break;
+            case "◎":
+            case "J":
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                break;
+            case "◈":
+            case "K":
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                break;
+            case "▣":
+            case "L":
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                break;
+            default:
+                Console.ForegroundColor = ConsoleColor.White;
+                break;
+        }
+        Console.Write($" {cardValue}  ");
+        Console.ResetColor();
+    }
 }
 
 enum Level
@@ -257,4 +382,11 @@ enum Result
     Undecided,
     Win,
     Lose    
+}
+
+enum Skin
+{
+    Number,
+    Alphabet,
+    Sign
 }

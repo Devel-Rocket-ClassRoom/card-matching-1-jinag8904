@@ -6,7 +6,7 @@ bool again = true;
 
 while (again)
 {
-    card.LevelSetting();
+    card.Setting();
     card.CardMix();
 
     card.MiriBogi();
