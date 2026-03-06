@@ -1,13 +1,15 @@
 using System;
 
-bool again = true;
-
-Console.WriteLine("=== 카드 짝 맞추기 게임 ===\n");
+Console.WriteLine("=== 카드 짝 맞추기 게임 ===");
 Card card = new Card();
+bool again = true;
 
 while (again)
 {
+    card.LevelSetting();
     card.CardMix();
+
+    card.MiriBogi();
 
     while (true)
     {
@@ -16,11 +18,12 @@ while (again)
 
         card.SelectCards();
 
-        if (card.foundCount == 8)
+        card.IsGameEnd();
+
+        if (card.gameResult != Result.Undecided)
         {
             again = card.GameEnd();
+            break;
         }
-
-        if (!again) return;
     }
 }
