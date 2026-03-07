@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 Console.WriteLine("=== 카드 짝 맞추기 게임 ===");
 CardGame cardgame = new CardGame();
@@ -13,6 +14,8 @@ do
 
     while (true)
     {
+        cardgame.stopwatch.Start();
+
         cardgame.ShowCards();
         cardgame.ShowCount();
 
@@ -23,6 +26,8 @@ do
         if (CardGame.gameResult != Result.Undecided)
         {
             again = cardgame.GameEnd();
+            cardgame.stopwatch.Stop();
+            cardgame.stopwatch.Reset();
             break;
         }
     }

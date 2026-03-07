@@ -93,7 +93,7 @@ class Cards
 
     public void RevealCard(int row, int column)
     {
-        revealedCards[row, column] = mixedCards[row, column];
+        revealedCards[row, column] = mixedCards[row, column];        
     }
 
     public void HideCard(int row, int column)

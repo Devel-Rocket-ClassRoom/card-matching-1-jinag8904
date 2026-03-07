@@ -3,7 +3,7 @@
 class CardSkinAlpha : ICardSkin
 {
     Array values = Enum.GetValues(typeof(ConsoleColor));
-    public static readonly string[] allShape = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };
+    public static readonly string[] allShape = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };    
 
     string[] ICardSkin.allShape => allShape;
 
