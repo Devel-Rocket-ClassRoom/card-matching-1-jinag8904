@@ -157,7 +157,7 @@ class Cards
         return true;
     }
 
-    public bool IsMatched(int row1, int column1, int row2, int column2)
+    public bool Matching(int row1, int column1, int row2, int column2)
     {
         if (mixedCards[row1, column1] != mixedCards[row2, column2])
         {
@@ -165,7 +165,7 @@ class Cards
         }
 
         else
-        {
+        {        
             return true;
         }
     }

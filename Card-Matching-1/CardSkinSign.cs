@@ -2,8 +2,13 @@
 
 class CardSkinSign : ICardSkin
 {
-    Array values = Enum.GetValues(typeof(ConsoleColor));
     public static readonly string[] allShape = { "★", "♠", "♥", "◆", "♣", "●", "■", "▲", "▼", "◎", "◈", "▣" };
+
+    private readonly ConsoleColor[] cardColors = {
+        ConsoleColor.Yellow, ConsoleColor.Blue, ConsoleColor.Red, ConsoleColor.Green,
+        ConsoleColor.Cyan, ConsoleColor.Magenta, ConsoleColor.White, ConsoleColor.DarkYellow,
+        ConsoleColor.DarkBlue, ConsoleColor.DarkRed, ConsoleColor.DarkGreen, ConsoleColor.DarkCyan
+    };
 
     string[] ICardSkin.allShape => allShape;
 
@@ -16,6 +21,6 @@ class CardSkinSign : ICardSkin
     public ConsoleColor GetColor(int cardValue)
     {
         if (cardValue == 0) return ConsoleColor.White;
-        return (ConsoleColor)values.GetValue(cardValue);
+        return cardColors[cardValue - 1];
     }
 }

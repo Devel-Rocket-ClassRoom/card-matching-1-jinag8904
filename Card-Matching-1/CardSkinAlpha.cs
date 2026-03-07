@@ -2,8 +2,13 @@
 
 class CardSkinAlpha : ICardSkin
 {
-    Array values = Enum.GetValues(typeof(ConsoleColor));
-    public static readonly string[] allShape = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };    
+    public static readonly string[] allShape = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };
+
+    private readonly ConsoleColor[] cardColors = {
+        ConsoleColor.Yellow, ConsoleColor.Blue, ConsoleColor.Red, ConsoleColor.Green,
+        ConsoleColor.Cyan, ConsoleColor.Magenta, ConsoleColor.White, ConsoleColor.DarkYellow,
+        ConsoleColor.DarkBlue, ConsoleColor.DarkRed, ConsoleColor.DarkGreen, ConsoleColor.DarkCyan
+    };
 
     string[] ICardSkin.allShape => allShape;
 
@@ -16,6 +21,6 @@ class CardSkinAlpha : ICardSkin
     public ConsoleColor GetColor(int cardValue)
     {
         if (cardValue == 0) return ConsoleColor.White;
-        return (ConsoleColor)values.GetValue(cardValue);
+        return cardColors[cardValue - 1];
     }
 }
