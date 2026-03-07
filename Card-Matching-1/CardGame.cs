@@ -14,16 +14,17 @@ class CardGame
     static public Skin skin;
     static public Result gameResult = Result.Undecided;
 
-    static int tryCount;
-    static int foundCount;
-    static int failedCount;
-    static int haveToFoundCount;
-    static int tryLimit;
+    static int tryCount;    // 시도 횟수
+    static int foundCount;  // 찾은 쌍
+    static int haveToFoundCount;    // 찾아야 하는 쌍
+    static int tryLimit;    // 시도 제한
+
+    static int failedCount; // 서바이벌용
+    int limitMSeconds;  // 타임어택용
 
     string input;
 
     int sleepMSeconds;
-    int limitMSeconds;
 
     public void Setting()
     {
@@ -110,27 +111,27 @@ class CardGame
             case Level.Easy:
                 tryLimit = 10;
                 sleepMSeconds = 5000;
-                limitMSeconds = 60000;
+                limitMSeconds = 60000;  // 타임어택용
                 break;
 
             case Level.Normal:
                 tryLimit = 20;
                 sleepMSeconds = 3000;
-                limitMSeconds = 60000;
+                limitMSeconds = 60000;  // 타임어택용
                 break;
 
             case Level.Hard:
                 tryLimit = 30;
                 sleepMSeconds = 2000;
-                limitMSeconds = 120000;
+                limitMSeconds = 120000; // 타임어택용
                 break;
         }
 
-        if (mode == Mode.Survival) tryLimit = 3;
+        if (mode == Mode.Survival) tryLimit = 3;    // 서바이벌의 시도 제한
+        failedCount = 0;    // 서바이벌용
 
         tryCount = 0;
         foundCount = 0;
-        failedCount = 0;
         haveToFoundCount = numberOfCards / 2;
 
         gameResult = Result.Undecided;
