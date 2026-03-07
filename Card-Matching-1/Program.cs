@@ -4,12 +4,12 @@ Console.WriteLine("=== 카드 짝 맞추기 게임 ===");
 CardGame cardgame = new CardGame();
 bool again = true;
 
-while (again)
+do
 {
     cardgame.Setting();
-    cardgame.Reset();
-    cardgame.CardMix();
-    cardgame.MiriBogi();
+    cardgame.ResetGame();
+
+    cardgame.PreView();
 
     while (true)
     {
@@ -20,10 +20,11 @@ while (again)
 
         cardgame.IsGameEnd();
 
-        if (cardgame.gameResult != Result.Undecided)
+        if (CardGame.gameResult != Result.Undecided)
         {
             again = cardgame.GameEnd();
             break;
         }
     }
-}
+} 
+while (again);

@@ -4,63 +4,25 @@ using System.Threading;
 
 class CardGame
 {
-    Random rand = new Random();
-    CardSkinNumber cardSkinNumber = new CardSkinNumber();
-    CardSkinAlpha cardSkinAlpha = new CardSkinAlpha();
-    CardSkinSign cardSkinSign = new CardSkinSign();
+    Cards cards;
 
-    Level level;
-    Mode mode;
-    Skin skin;
-    public Result gameResult = Result.Undecided;
+    static Level level;
+    static Mode mode;
+    static public Skin skin;
+    static public Result gameResult = Result.Undecided;
 
-    public static int[] allCards = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12 };
-
-    int[,] mixedCards;
-    int[,] revealedCards;
-
-    bool[] randomedCards;
-    int selected;
-
-    public int tryCount;
-    public int foundCount;
-    public int haveToFoundCount;
-    public int tryLimit;
+    static public int tryCount;
+    static public int foundCount;
+    static public int haveToFoundCount;
+    static public int tryLimit;
 
     string input;
-    int haeng1, yeol1;
-    int haeng2, yeol2;
 
     int sleepMSeconds;
 
     public void Setting()
     {
-        while (true)
-        {
-            Console.WriteLine("스킨을 선택하세요:\n1. 숫자 (기본)\n2. 알파벳 (컬러)\n3. 기호 (컬러)");
-            Console.Write("선택: ");
-            input = Console.ReadLine();
-
-            switch (input)
-            {
-                case "1":
-                    skin = Skin.Number;
-                    break;
-                case "2":
-                    skin = Skin.Alphabet;
-                    break;
-                case "3":
-                    skin = Skin.Sign;
-                    break;
-                default:
-                    Console.WriteLine("잘못된 입력입니다.");
-                    continue;
-            }
-
-            break;
-        }
-
-        while (true)
+        while (true)    // 난이도 세팅
         {
             Console.WriteLine("\n난이도를 선택하세요:\n1. 쉬움 (2x4)\n2. 보통 (4x4)\n3. 어려움 (4x6)");
             Console.Write("선택: ");
@@ -70,44 +32,62 @@ class CardGame
             {
                 case "1":
                     level = Level.Easy;
-                    return;
+                    break;
                 case "2":
                     level = Level.Normal;
-                    return;
+                    break;
                 case "3":
                     level = Level.Hard;
-                    return;
+                    break;
                 default:
                     Console.WriteLine("잘못된 입력입니다.");
                     break;
             }
+
+            break;
+        }
+
+        while (true)    // 카드 스킨 세팅
+        {
+            Console.WriteLine("\n스킨을 선택하세요:\n1. 숫자 (기본)\n2. 알파벳 (컬러)\n3. 기호 (컬러)");
+            Console.Write("선택: ");
+            input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    skin = Skin.Number;
+                    return;
+                case "2":
+                    skin = Skin.Alphabet;
+                    return;
+                case "3":
+                    skin = Skin.Sign;
+                    return;
+                default:
+                    Console.WriteLine("잘못된 입력입니다.");
+                    continue;
+            }
         }
     }
 
-    public void Reset()
+    public void ResetGame()
     {
-        switch (level)  // 난이도 별 필드 초기화
+        cards = new Cards(level, skin, out int numberOfCards); // 레벨 기준으로 카드 초기화
+
+        switch (level)  // 난이도 별 카드게임 필드 초기화
         {
             case Level.Easy:
-                revealedCards = new int[2, 4];
-                mixedCards = new int[2, 4];
-                randomedCards = new bool[8];
                 tryLimit = 10;
                 sleepMSeconds = 5000;
                 break;
 
             case Level.Normal:
-                revealedCards = new int[4, 4];
-                mixedCards = new int[4, 4];
-                randomedCards = new bool[16];
                 tryLimit = 20;
                 sleepMSeconds = 3000;
                 break;
 
             case Level.Hard:
-                revealedCards = new int[4, 6];
-                mixedCards = new int[4, 6];
-                randomedCards = new bool[24];
                 tryLimit = 30;
                 sleepMSeconds = 2000;
                 break;
@@ -115,102 +95,29 @@ class CardGame
 
         tryCount = 0;
         foundCount = 0;
-        haveToFoundCount = randomedCards.Length / 2;
+        haveToFoundCount = numberOfCards / 2;
         gameResult = Result.Undecided;
+
+        cards.Mix();
     }
 
-    public void CardMix()   // 카드 섞기 메서드
-    {
-        Console.Clear();
-        Console.WriteLine("카드를 섞는 중...");
-
-        Thread.Sleep(2000);
-
-        for (int i = 0; i < revealedCards.GetLength(0); i++)
-        {
-            for (int j = 0; j < revealedCards.GetLength(1); j++)
-            {
-                revealedCards[i, j] = 0;
-
-                while (true)
-                {
-                    selected = rand.Next(randomedCards.Length);
-                    if (randomedCards[selected] == true) continue;
-
-                    mixedCards[i, j] = allCards[selected];
-
-                    randomedCards[selected] = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    public void MiriBogi()
+    public void PreView()
     {
         Console.Clear();
 
-        for (int i = 0; i < mixedCards.GetLength(0); i++)
-        {
-            for (int j = 0; j < mixedCards.GetLength(1); j++)
-            {
-                revealedCards[i, j] = mixedCards[i, j];
-            }
-        }
-
+        cards.RevealAll();
         ShowCards();
+
         Console.WriteLine($"\n잘 기억하세요! {sleepMSeconds/1000}초 후 뒤집힙니다.");
         Thread.Sleep(sleepMSeconds);
 
-        for (int i = 0; i < mixedCards.GetLength(0); i++)
-        {
-            for (int j = 0; j < mixedCards.GetLength(1); j++)
-            {
-                revealedCards[i, j] = 0;
-            }
-        }
+        cards.HideAll();
     }
 
     public void ShowCards()
     {
         Console.Clear();
-        Console.Write("    ");
-
-        for (int i = 0; i < revealedCards.GetLength(1); i++)
-        {
-            Console.Write($"{i + 1}열 ");
-        }
-
-        Console.WriteLine();
-
-        for (int i = 0; i < revealedCards.GetLength(0); i++)
-        {
-            Console.Write($"{i + 1}행 ");
-
-            for (int j = 0; j < revealedCards.GetLength(1); j++)
-            {
-                switch (skin)
-                {
-                    case Skin.Number:
-                        Console.ForegroundColor = cardSkinNumber.GetColor(revealedCards[i, j]);
-                        Console.Write($" {cardSkinNumber.GetDisplay(revealedCards[i, j])}  ");
-                        Console.ResetColor();
-                        break;
-                    case Skin.Alphabet:
-                        Console.ForegroundColor = cardSkinAlpha.GetColor(revealedCards[i, j]);
-                        Console.Write($" {cardSkinAlpha.GetDisplay(revealedCards[i, j])}  ");
-                        Console.ResetColor();
-                        break;
-                    case Skin.Sign:
-                        Console.ForegroundColor = cardSkinSign.GetColor(revealedCards[i, j]);
-                        Console.Write($" {cardSkinSign.GetDisplay(revealedCards[i, j])}  ");
-                        Console.ResetColor();
-                        break;
-                }
-            }
-
-            Console.WriteLine();
-        }
+        cards.ShowRevealedCards(skin);
     }
 
     public void ShowCount()
@@ -220,6 +127,8 @@ class CardGame
 
     public void SelectCards()
     {
+        int row1, column1;
+
         while (true)
         {
             Console.Write("\n첫 번째 카드를 선택하세요 (행 열): ");
@@ -227,19 +136,22 @@ class CardGame
 
             if (input.Split(' ').Length == 2 && int.TryParse(input.Split(' ')[0], out int result) && int.TryParse(input.Split(' ')[1], out int result2))
             {
-                haeng1 = result - 1;
-                yeol1 = result2 - 1;
+                row1 = result - 1;
+                column1 = result2 - 1;
 
-                if (haeng1 >= 0 && haeng1 < mixedCards.GetLength(0) && yeol1 >= 0 && yeol1 < mixedCards.GetLength(1))
-                    if (revealedCards[haeng1, yeol1] == 0)
-                        break;
+                if (!cards.IsOutOfRangeOrAlreadyRevealed(row1, column1))
+                {
+                    break;
+                }
             }
 
             Console.WriteLine("잘못된 입력입니다.");
         }
 
-        revealedCards[haeng1, yeol1] = mixedCards[haeng1, yeol1];
+        cards.RevealCard(row1, column1);
         ShowCards();
+
+        int row2, column2;
 
         while (true)
         {
@@ -248,38 +160,34 @@ class CardGame
 
             if (input.Split(' ').Length == 2 && int.TryParse(input.Split(' ')[0], out int result) && int.TryParse(input.Split(' ')[1], out int result2))
             {
-                haeng2 = result - 1;
-                yeol2 = result2 - 1;
+                row2 = result - 1;
+                column2 = result2 - 1;
 
-                if (haeng2 >= 0 && haeng2 < mixedCards.GetLength(0) && yeol2 >= 0 && yeol2 < mixedCards.GetLength(1))
-                    if (revealedCards[haeng2, yeol2] == 0)
-                        break;
+                if (!cards.IsOutOfRangeOrAlreadyRevealed(row2, column2))
+                {
+                    break;
+                }
             }
 
             Console.WriteLine("잘못된 입력입니다.");
         }
 
-        revealedCards[haeng2, yeol2] = mixedCards[haeng2, yeol2];
+        cards.RevealCard(row2, column2);
         ShowCards();
 
-        if (mixedCards[haeng1, yeol1] != mixedCards[haeng2, yeol2])
+        if (cards.IsMatched(row1, column1, row2, column2))
         {
-            Console.WriteLine("\n짝이 맞지 않습니다!");
-
-            revealedCards[haeng1, yeol1] = 0;
-            revealedCards[haeng2, yeol2] = 0;
+            Console.WriteLine("\n짝을 찾았습니다!");
+            foundCount++;
 
             Thread.Sleep(2000);
         }
 
         else
         {
-            Console.WriteLine("\n짝을 찾았습니다!");
-
-            revealedCards[haeng1, yeol1] = mixedCards[haeng1, yeol1];
-            revealedCards[haeng2, yeol2] = mixedCards[haeng2, yeol2];
-
-            foundCount++;
+            Console.WriteLine("\n짝이 맞지 않습니다!");
+            cards.HideCard(row1, column1);
+            cards.HideCard(row2, column2);
 
             Thread.Sleep(2000);
         }
