@@ -1,6 +1,6 @@
 ﻿using System;
 
-class CardSkinSign : ICardSkin
+class CardSkinMark : ICardSkin
 {
     public static readonly string[] allShape = { "★", "♠", "♥", "◆", "♣", "●", "■", "▲", "▼", "◎", "◈", "▣" };
 
@@ -14,8 +14,8 @@ class CardSkinSign : ICardSkin
 
     public string GetDisplay(int cardValue)
     {
-        if (cardValue == 0) return "*";
-        return allShape[cardValue - 1].ToString();
+        if (cardValue == 0) return "   **";
+        return $"{allShape[cardValue - 1].ToString(), 4}";
     }
 
     public ConsoleColor GetColor(int cardValue)

@@ -30,7 +30,7 @@ class GameTable
                     break;
                 default:
                     Console.WriteLine("잘못된 입력입니다.");
-                    break;
+                    continue;
             }
 
             break;
@@ -55,7 +55,7 @@ class GameTable
                     break;
                 default:
                     Console.WriteLine("잘못된 입력입니다.");
-                    break;
+                    continue;
             }
 
             break;

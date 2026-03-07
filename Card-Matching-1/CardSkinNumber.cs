@@ -8,8 +8,8 @@ class CardSkinNumber : ICardSkin
 
     public string GetDisplay(int cardValue)
     {
-        if (cardValue == 0) return "*";
-        return cardValue.ToString();
+        if (cardValue == 0) return "   **";
+        return $"{cardValue.ToString(), 5}";
     }
 
     public ConsoleColor GetColor(int cardValue)

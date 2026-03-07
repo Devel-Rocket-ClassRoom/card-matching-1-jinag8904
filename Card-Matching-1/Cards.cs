@@ -58,7 +58,7 @@ class Cards
                 break;
 
             case Skin.Sign:
-                cardSkin = new CardSkinSign();
+                cardSkin = new CardSkinMark();
                 actualShape = cardSkin.allShape;
                 break;
         }
@@ -129,19 +129,19 @@ class Cards
 
         for (int i = 0; i < revealedCards.GetLength(1); i++)
         {
-            Console.Write($"{i + 1}열 ");
+            Console.Write($"{i + 1, 3}열");
         }
 
         Console.WriteLine();
 
         for (int i = 0; i < revealedCards.GetLength(0); i++)
         {
-            Console.Write($"{i + 1}행 ");
+            Console.Write($"{i + 1}행");
 
             for (int j = 0; j < revealedCards.GetLength(1); j++)
             {
                 Console.ForegroundColor = cardSkin.GetColor(revealedCards[i, j]);
-                Console.Write($" {cardSkin.GetDisplay(revealedCards[i, j])}  ");
+                Console.Write(cardSkin.GetDisplay(revealedCards[i, j]));
                 Console.ResetColor();
             }
 
