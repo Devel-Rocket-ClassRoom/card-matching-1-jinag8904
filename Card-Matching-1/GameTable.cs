@@ -4,8 +4,8 @@ class GameTable
 {
     public static Mode mode;
     public static Level level;
-    static public Skin skin;
-    static public Result gameResult = Result.Undecided;
+    public static Skin skin;
+    public static Result gameResult = Result.Undecided;
 
     static string input;
 
@@ -76,7 +76,7 @@ class GameTable
                     skin = Skin.Alphabet;
                     return;
                 case "3":
-                    skin = Skin.Sign;
+                    skin = Skin.Mark;
                     return;
                 default:
                     Console.WriteLine("잘못된 입력입니다.");

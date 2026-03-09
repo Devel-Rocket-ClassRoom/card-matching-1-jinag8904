@@ -6,6 +6,10 @@ class Cards
     static readonly int[] allCards = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12 };
 
     ICardSkin cardSkin;
+    ICardSkin cardNum = new CardSkinNumber();
+    ICardSkin cardAlpha = new CardSkinAlpha();
+    ICardSkin cardMark = new CardSkinMark();
+
     static string[] actualShape;
 
     int[,] mixedCards;
@@ -48,17 +52,17 @@ class Cards
         switch (skin)
         {
             case Skin.Number:
-                cardSkin = new CardSkinNumber();
+                cardSkin = cardNum;
                 actualShape = cardSkin.allShape;
                 break;
 
             case Skin.Alphabet:
-                cardSkin = new CardSkinAlpha();
+                cardSkin = cardAlpha;
                 actualShape = cardSkin.allShape;
                 break;
 
-            case Skin.Sign:
-                cardSkin = new CardSkinMark();
+            case Skin.Mark:
+                cardSkin = cardMark;
                 actualShape = cardSkin.allShape;
                 break;
         }

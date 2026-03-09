@@ -16,7 +16,7 @@ enum Skin
 {
     Number,
     Alphabet,
-    Sign
+    Mark
 }
 
 enum Mode
