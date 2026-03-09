@@ -17,7 +17,6 @@ class Cards
 
     Random rand = new Random();
     bool[] randomedCards;
-    int selected;
 
     public Cards(Level level, Skin skin, out int numberOfCards) // 난이도 별 카드 개수와 스킨 설정
     {
@@ -70,6 +69,8 @@ class Cards
 
     public void Mix()
     {
+        int selected;
+
         Console.Clear();
         Console.WriteLine("카드를 섞는 중...");
 
