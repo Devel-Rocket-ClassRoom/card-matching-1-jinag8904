@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 Console.WriteLine("=== 카드 짝 맞추기 게임 ===");
 CardGame cardgame;
