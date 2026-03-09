@@ -15,7 +15,7 @@ class CardSkinMark : ICardSkin
     public string GetDisplay(int cardValue)
     {
         if (cardValue == 0) return "   **";
-        return $"{allShape[cardValue - 1].ToString(), 4}";
+        return $"{allShape[cardValue - 1].ToString(), 5}";
     }
 
     public ConsoleColor GetColor(int cardValue)
