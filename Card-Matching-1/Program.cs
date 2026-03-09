@@ -1,7 +1,12 @@
 using System;
 
-Console.WriteLine("=== 카드 짝 맞추기 게임 ===");
+CardGame classicGame = new ClassicGame();
+CardGame timeAttackGame = new TimeAttackGame();
+CardGame survivalGame = new SurvivalGame();
 CardGame cardgame;
+
+Console.WriteLine("=== 카드 짝 맞추기 게임 ===");
+
 bool again = true;
 
 do
@@ -11,13 +16,13 @@ do
     switch (GameTable.mode)
     {
         case Mode.Classic:
-            cardgame = new ClassicGame();
+            cardgame = classicGame;
             break;
         case Mode.TimeAttack:
-            cardgame = new TimeAttackGame();
+            cardgame = timeAttackGame;
             break;
         case Mode.Survival:
-            cardgame = new SurvivalGame();
+            cardgame = survivalGame;
             break;
         default:
             throw new ArgumentException("예외 발생");
